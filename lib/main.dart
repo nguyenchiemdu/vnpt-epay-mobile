@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('Loading... Transaction Data');
     final response = await Api().post('/home/process/mobile', data: data);
     final transaction = response['data'];
-    debugPrint(transaction);
+    debugPrint(transaction.toString());
     MyInAppBrowser(transaction: transaction as Map<String, dynamic>)
         .openFile(assetFilePath: 'assets/index.html', options: options);
   }
