@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vnpt_epay_mobile/api.dart';
-import 'package:vnpt_epay_mobile/inapp_browser.dart';
+import 'package:vnpt_epay_mobile/models/transaction.dart';
+import 'package:vnpt_epay_mobile/payment_browser.dart';
+import 'package:vnpt_epay_mobile/vpnt_epay/vnpt_epay_hepler.dart';
+import 'package:vnpt_epay_mobile/widget/app_text_field.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,38 +35,75 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void enterPayment() async {
-    const data = {
-      "goodsNm": "IPhone 11 Plus",
-      "amount": 3000,
-      "userFee": 0,
-      "payType": "NO",
-      "bankCode": "",
-      "windowColor": "#0061e3",
-      "payOption": "PAY_CREATE_TOKEN",
-      "merId": "MGPDEMO001",
-      "tokenId": ""
-    };
-    debugPrint('Loading... Transaction Data');
-    final response = await Api().post('/home/process/mobile', data: data);
-    final transaction = response['data'];
-    debugPrint(transaction.toString());
-    MyInAppBrowser(transaction: transaction as Map<String, dynamic>)
-        .openFile(assetFilePath: 'assets/index.html', options: options);
+    Transaction transaction = VnptEpayHelper().createTransaction(
+      amount: _amountController.text,
+      buyerFirstNm: _firstNameController.text,
+      buyerLastNm: _lastNameController.text,
+      buyerPhone: _phoneController.text,
+      userId: _userIdController.text,
+      goodsNm: _productNameController.text,
+    );
+    PaymentBrowser(transaction: transaction.toJson()).openPaymentBrowser();
   }
+
+  final TextEditingController _amountController =
+      TextEditingController(text: '10000');
+  final TextEditingController _firstNameController =
+      TextEditingController(text: 'Huyen');
+  final TextEditingController _lastNameController =
+      TextEditingController(text: 'Hoang');
+  final TextEditingController _phoneController =
+      TextEditingController(text: '0989593059');
+  final TextEditingController _productNameController =
+      TextEditingController(text: 'IPhone 11');
+  final TextEditingController _userIdController =
+      TextEditingController(text: '6539d6cf197f81e8317056f7');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-                onPressed: enterPayment, child: const Text('Enter Payment')),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      AppTextField(
+                        label: ('Amount'),
+                        controller: _amountController,
+                      ),
+                      AppTextField(
+                        label: ('First Name'),
+                        controller: _firstNameController,
+                      ),
+                      AppTextField(
+                        label: ('Last Name'),
+                        controller: _lastNameController,
+                      ),
+                      AppTextField(
+                        label: ('Phone'),
+                        controller: _phoneController,
+                      ),
+                      AppTextField(
+                        label: ('Product Name'),
+                        controller: _productNameController,
+                      ),
+                      AppTextField(
+                        label: ('User Id'),
+                        controller: _userIdController,
+                      ),
+                      // Create dropdown for pay type
+                    ],
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: enterPayment, child: const Text('Enter Payment')),
+            ],
+          ),
         ),
       ),
     );
