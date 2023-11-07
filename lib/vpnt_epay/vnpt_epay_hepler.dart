@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:crypto/crypto.dart';
+import 'package:vnpt_epay_mobile/enum/bank_code.dart';
 import 'package:vnpt_epay_mobile/enum/country_code.dart';
 import 'package:vnpt_epay_mobile/enum/currency.dart';
 import 'package:vnpt_epay_mobile/enum/language.dart';
@@ -94,7 +95,8 @@ class VnptEpayHelper {
       required String buyerLastNm,
       required String buyerPhone,
       required String userId,
-      PayType payType = PayType.NO}) {
+      PayType payType = PayType.EW,
+      BankCode bankCode = BankCode.MOMO}) {
     Currency currency = Currency.VND;
     Language userLanguage = Language.VN;
     WindowType windowType = WindowType.mobile;
@@ -110,7 +112,7 @@ class VnptEpayHelper {
     String merchantToken = generateMerchantToken(
         merTrxId: merTrxId, date: date, amount: int.parse(amount));
     return Transaction(
-      buyerCountry: CountryCode.vn,
+      buyerCountry: CountryCode.en,
       buyerLastNm: buyerLastNm,
       buyerFirstNm: buyerFirstNm,
       buyerPhone: buyerPhone,
@@ -125,6 +127,7 @@ class VnptEpayHelper {
       description: description,
       payType: payType,
       payOption: payOption,
+      bankCode: bankCode,
       reqDomain: reqDomain,
       windowColor: windowColor,
       payToken: '',
@@ -138,12 +141,12 @@ class VnptEpayHelper {
 
   String getJavaScriptCode(Map<String, dynamic> transaction) {
     String fields = _mapToFormattedString(transaction);
-    return '''
+    final jsScript = '''
             const form = document.createElement('form');
             form.id = 'megapayForm';
             form.name = 'megapayForm';
             form.method = 'POST';
-            form.action = '$vnptEpayDomain/pg_was/order/Minit.do';
+            form.action = '$vnptEpayDomain/pg_was/order/init.do';
 
             const createHiddenInput = (name, value) => {
               const input = document.createElement('input');
@@ -178,5 +181,6 @@ class VnptEpayHelper {
             document.body.appendChild(form);
             form.submit();
           ''';
+    return jsScript;
   }
 }

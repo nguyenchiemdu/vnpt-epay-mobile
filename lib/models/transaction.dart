@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vnpt_epay_mobile/enum/bank_code.dart';
 import 'package:vnpt_epay_mobile/enum/country_code.dart';
 import 'package:vnpt_epay_mobile/enum/currency.dart';
 import 'package:vnpt_epay_mobile/enum/language.dart';
@@ -33,6 +34,8 @@ class Transaction {
   final String description;
   // [IC,DC,EW,NO]
   final PayType payType;
+  // Used  for eWallet payment, choose dirrectly type of Wallet
+  final BankCode bankCode;
   final PayOption payOption;
   final String reqDomain;
   // Background color for payment window
@@ -62,6 +65,7 @@ class Transaction {
       required this.windowType,
       required this.description,
       required this.payType,
+      required this.bankCode,
       required this.payOption,
       required this.reqDomain,
       required this.windowColor,
@@ -88,6 +92,7 @@ class Transaction {
       'windowType': windowType.getValue(),
       'description': description,
       'payType': payType.name,
+      'bankCode': bankCode.name,
       'payOption': payOption.name,
       'reqDomain': reqDomain,
       'windowColor': _getColorCode(),

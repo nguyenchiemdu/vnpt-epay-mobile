@@ -1,1 +1,5 @@
-enum Language { EN, VN, KR }
+enum Language {
+  EN,
+  VN,
+  KO,
+}
