@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
       buyerPhone: _phoneController.text,
       userId: _userIdController.text,
       goodsNm: _productNameController.text,
+      payToken: _payWithTokenController.text,
     );
     PaymentBrowser(transaction: transaction.toJson()).openPaymentBrowser();
   }
@@ -58,6 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
       TextEditingController(text: 'IPhone 11');
   final TextEditingController _userIdController =
       TextEditingController(text: '6539d6cf197f81e8317056f7');
+  final TextEditingController _payWithTokenController =
+      TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +97,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       AppTextField(
                         label: ('User Id'),
                         controller: _userIdController,
+                      ),
+                      AppTextField(
+                        label: ('Pay Token'),
+                        controller: _payWithTokenController,
                       ),
                       // Create dropdown for pay type
                     ],

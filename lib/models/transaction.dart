@@ -92,7 +92,7 @@ class Transaction {
       'windowType': windowType.getValue(),
       'description': description,
       'payType': payType.name,
-      'bankCode': bankCode.name,
+      'bankCode': bankCode.codeValue,
       'payOption': payOption.name,
       'reqDomain': reqDomain,
       'windowColor': _getColorCode(),

@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 /// Only Supported for ATM and Credit Card Payment methods
 enum PayOption {
   // Pay with ATM or Credit Card and create Token for the next time
