@@ -93,7 +93,7 @@ class Transaction {
       'description': description,
       'payType': payType.name,
       'bankCode': bankCode.codeValue,
-      'payOption': payOption.name,
+      'payOption': payOption.getName,
       'reqDomain': reqDomain,
       'windowColor': _getColorCode(),
       'payToken': payToken,

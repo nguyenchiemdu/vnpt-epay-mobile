@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:vnpt_epay_mobile/enum/bank_code.dart';
+import 'package:vnpt_epay_mobile/enum/language.dart';
+import 'package:vnpt_epay_mobile/enum/pay_option.dart';
+import 'package:vnpt_epay_mobile/enum/pay_type.dart';
 import 'package:vnpt_epay_mobile/models/transaction.dart';
 import 'package:vnpt_epay_mobile/payment_browser.dart';
 import 'package:vnpt_epay_mobile/vpnt_epay/vnpt_epay_hepler.dart';
 import 'package:vnpt_epay_mobile/widget/app_text_field.dart';
+import 'package:vnpt_epay_mobile/widget/dropdown_button.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -43,6 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
       userId: _userIdController.text,
       goodsNm: _productNameController.text,
       payToken: _payWithTokenController.text,
+      payType: _payType,
+      payOption: _payOption,
+      bankCode: _bankCode,
+      language: _language,
     );
     PaymentBrowser(transaction: transaction.toJson()).openPaymentBrowser();
   }
@@ -61,7 +71,10 @@ class _MyHomePageState extends State<MyHomePage> {
       TextEditingController(text: '6539d6cf197f81e8317056f7');
   final TextEditingController _payWithTokenController =
       TextEditingController(text: '');
-
+  PayOption _payOption = PayOption.EMPTY;
+  PayType _payType = PayType.NO;
+  BankCode _bankCode = BankCode.EMPTY;
+  Language _language = Language.VN;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +115,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         label: ('Pay Token'),
                         controller: _payWithTokenController,
                       ),
-                      // Create dropdown for pay type
+                      AppDropdownButton<PayOption>(
+                        onChanged: (value) {
+                          _payOption = value!;
+                        },
+                        initValue: PayOption.EMPTY,
+                        textBuilder: (value) => value.name,
+                        items: PayOption.values.map((e) => e).toList(),
+                      ),
+                      AppDropdownButton<PayType>(
+                        initValue: PayType.NO,
+                        onChanged: (value) {
+                          _payType = value!;
+                        },
+                        textBuilder: (value) => value.name,
+                        items: PayType.values.map((e) => e).toList(),
+                      ),
+                      AppDropdownButton<BankCode>(
+                        initValue: BankCode.EMPTY,
+                        onChanged: (value) {
+                          _bankCode = value!;
+                        },
+                        textBuilder: (value) => value.name,
+                        items: BankCode.values.map((e) => e).toList(),
+                      ),
+                      AppDropdownButton<Language>(
+                        initValue: Language.VN,
+                        onChanged: (value) {
+                          _language = value!;
+                        },
+                        textBuilder: (value) => value.name,
+                        items: Language.values.map((e) => e).toList(),
+                      ),
                     ],
                   ),
                 ),

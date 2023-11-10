@@ -3,8 +3,6 @@
 enum BankCode {
   MOMO,
   ZALO,
-  MOCA,
-  SHPP,
   VTTP,
   // empty for this case
   EMPTY;

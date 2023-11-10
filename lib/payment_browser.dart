@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:vnpt_epay_mobile/vpnt_epay/vnpt_epay_hepler.dart';
 
@@ -8,13 +7,25 @@ class PaymentBrowser extends InAppBrowser {
   final indexPath = 'assets/index.html';
   bool isFormSubmitted = false;
   final paymentBrowserOptions = InAppBrowserClassOptions(
-      crossPlatform: InAppBrowserOptions(
-        hideUrlBar: true,
-        toolbarTopBackgroundColor: const Color(0xff0061e3),
+    crossPlatform: InAppBrowserOptions(
+      hideUrlBar: true,
+    ),
+    inAppWebViewGroupOptions: InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        javaScriptEnabled: true,
+        clearCache: true,
+        incognito: true,
       ),
-      inAppWebViewGroupOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(javaScriptEnabled: true)));
+    ),
+  );
   PaymentBrowser({required this.transaction});
+  @override
+  void onLoadStart(Uri? url) {
+    //TODO: handle url
+    if (url.toString().startsWith('zalopay')) {
+      InAppBrowser.openWithSystemBrowser(url: url!);
+    }
+  }
 
   @override
   Future onLoadStop(url) async {

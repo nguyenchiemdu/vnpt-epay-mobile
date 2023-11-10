@@ -11,7 +11,6 @@ import 'package:vnpt_epay_mobile/enum/pay_option.dart';
 import 'package:vnpt_epay_mobile/enum/pay_type.dart';
 import 'package:vnpt_epay_mobile/enum/window_type.dart';
 import 'package:vnpt_epay_mobile/models/transaction.dart';
-// import 'package:encrypt/encrypt.dart';
 import 'package:dart_des/dart_des.dart';
 import 'package:convert/convert.dart';
 
@@ -45,7 +44,6 @@ class VnptEpayHelper {
     String formattedString = '''[
     ${formattedList.join('\n    ')}
   ]''';
-
     return formattedString;
   }
 
@@ -135,17 +133,16 @@ class VnptEpayHelper {
     required String buyerLastNm,
     required String buyerPhone,
     required String userId,
-    PayType payType = PayType.DC,
+    PayType payType = PayType.NO,
+    PayOption payOption = PayOption.EMPTY,
     BankCode bankCode = BankCode.EMPTY,
     String payToken = '',
+    Language language = Language.VN,
   }) {
+    Language userLanguage = language;
     Currency currency = Currency.VND;
-    Language userLanguage = Language.VN;
     WindowType windowType = WindowType.mobile;
     String description = 'TNUWKCMFVW';
-    PayOption payOption = payToken.isEmpty
-        ? PayOption.PAY_CREATE_TOKEN
-        : PayOption.PAY_WITH_TOKEN;
     Color windowColor = const Color(0xff0061e3);
     if (payToken.isNotEmpty) {
       payToken = encodePayToken(payToken);

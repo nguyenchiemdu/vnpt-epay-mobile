@@ -5,4 +5,15 @@ enum PayOption {
   PAY_CREATE_TOKEN,
   // Pay with token without enter card information again
   PAY_WITH_TOKEN,
+  // Empty value
+  EMPTY;
+
+  String get getName {
+    switch (this) {
+      case EMPTY:
+        return '';
+      default:
+        return name;
+    }
+  }
 }
