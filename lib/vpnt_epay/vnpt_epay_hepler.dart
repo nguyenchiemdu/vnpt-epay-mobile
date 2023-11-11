@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:crypto/crypto.dart';
+import 'package:vnpt_epay_mobile/api/api.dart';
 import 'package:vnpt_epay_mobile/enum/bank_code.dart';
 import 'package:vnpt_epay_mobile/enum/country_code.dart';
 import 'package:vnpt_epay_mobile/enum/currency.dart';
@@ -10,7 +11,7 @@ import 'package:vnpt_epay_mobile/enum/language.dart';
 import 'package:vnpt_epay_mobile/enum/pay_option.dart';
 import 'package:vnpt_epay_mobile/enum/pay_type.dart';
 import 'package:vnpt_epay_mobile/enum/window_type.dart';
-import 'package:vnpt_epay_mobile/models/transaction.dart';
+import 'package:vnpt_epay_mobile/models/epay_transaction.dart';
 import 'package:dart_des/dart_des.dart';
 import 'package:convert/convert.dart';
 
@@ -19,23 +20,14 @@ class VnptEpayHelper {
       'rf8whwaejNhJiQG2bsFubSzccfRc/iRYyGUn6SPmT6y/L7A2XABbu9y4GvCoSTOTpvJykFi6b1G0crU8et2O0Q==';
   String get keyEncrypt => encodeKey.substring(encodeKey.length - 24);
   String get keyDecrypt => encodeKey.substring(0, 24);
-
   final String merId = 'EPAY000001';
-  final String callBackUrl =
-      'https://vnpt-epay-demo.onrender.com/callback/transactionHandle';
+  String get callBackUrl => '$domain/callback/transactionHandle';
   final String notiUrl =
       'https://vnpt-epay-demo.onrender.com/transactionHandle';
   final String reqDomain = 'https://sandbox.megapay.vn';
 
-  final bool isSandbox;
-  VnptEpayHelper({this.isSandbox = true});
-  String get vnptEpayDomain {
-    if (isSandbox) {
-      return 'https://sandbox.megapay.vn';
-    } else {
-      return 'https://pg.megapay.vn';
-    }
-  }
+  VnptEpayHelper();
+  String get vnptEpayDomain => 'https://sandbox.megapay.vn';
 
   String _mapToFormattedString(Map<String, dynamic> data) {
     List<String> formattedList = data.entries.map((entry) {
@@ -126,13 +118,14 @@ class VnptEpayHelper {
     return cipher;
   }
 
-  Transaction createTransaction({
-    required String amount,
+  EpayTransaction createTransaction({
+    required int amount,
     required String goodsNm,
     required String buyerFirstNm,
     required String buyerLastNm,
     required String buyerPhone,
     required String userId,
+    required String transactionId,
     PayType payType = PayType.NO,
     PayOption payOption = PayOption.EMPTY,
     BankCode bankCode = BankCode.EMPTY,
@@ -152,19 +145,16 @@ class VnptEpayHelper {
     DateTime date = DateTime.now();
     String timeStamp = generateTimeStamp(date);
     String invoiceNo = generateInvoiceNo(date: date);
-    String merTrxId = generateMerTrxId(date: date);
+    String merTrxId = '$merId$transactionId';
     String merchantToken = generateMerchantToken(
-        payToken: payToken,
-        merTrxId: merTrxId,
-        date: date,
-        amount: int.parse(amount));
-    return Transaction(
+        payToken: payToken, merTrxId: merTrxId, date: date, amount: amount);
+    return EpayTransaction(
       buyerCountry: CountryCode.en,
       buyerLastNm: buyerLastNm,
       buyerFirstNm: buyerFirstNm,
       buyerPhone: buyerPhone,
       userId: userId,
-      amount: int.parse(amount),
+      amount: amount,
       goodsNm: goodsNm,
       callBackUrl: callBackUrl,
       notiUrl: notiUrl,

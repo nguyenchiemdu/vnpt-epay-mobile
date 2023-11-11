@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:vnpt_epay_mobile/api/api.dart';
 import 'package:vnpt_epay_mobile/enum/bank_code.dart';
+import 'package:vnpt_epay_mobile/enum/currency.dart';
 import 'package:vnpt_epay_mobile/enum/language.dart';
 import 'package:vnpt_epay_mobile/enum/pay_option.dart';
 import 'package:vnpt_epay_mobile/enum/pay_type.dart';
+import 'package:vnpt_epay_mobile/models/epay_transaction.dart';
 import 'package:vnpt_epay_mobile/models/transaction.dart';
 import 'package:vnpt_epay_mobile/payment_browser.dart';
 import 'package:vnpt_epay_mobile/vpnt_epay/vnpt_epay_hepler.dart';
@@ -41,20 +44,51 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   void enterPayment() async {
-    Transaction transaction = VnptEpayHelper().createTransaction(
-      amount: _amountController.text,
-      buyerFirstNm: _firstNameController.text,
-      buyerLastNm: _lastNameController.text,
-      buyerPhone: _phoneController.text,
-      userId: _userIdController.text,
-      goodsNm: _productNameController.text,
-      payToken: _payWithTokenController.text,
-      payType: _payType,
-      payOption: _payOption,
-      bankCode: _bankCode,
-      language: _language,
+    String userId = _userIdController.text;
+    String buyerFirstNm = _firstNameController.text;
+    String buyerLastNm = _lastNameController.text;
+    String buyerPhone = _phoneController.text;
+    int amount = int.parse(_amountController.text);
+    String goodsNm = _productNameController.text;
+    Currency currency = Currency.VND;
+    PayType payType = _payType;
+    BankCode bankCode = _bankCode;
+    PayOption payOption = _payOption;
+    String payToken = _payWithTokenController.text;
+    Language language = _language;
+
+    // Call to BE to create Transaction and get Transaction Id
+
+    Transaction transactionBody = Transaction(
+      userId: userId,
+      amount: amount,
+      goodsNm: goodsNm,
+      currency: currency,
+      payType: payType,
+      bankCode: bankCode,
+      payOption: payOption,
     );
-    PaymentBrowser(transaction: transaction.toJson()).openPaymentBrowser();
+
+    final json = await Api()
+        .post('/transaction/create', data: transactionBody.toJson())
+        .then((res) => res['data']);
+    String transactionId = json['_id'];
+
+    EpayTransaction epayTransaction = VnptEpayHelper().createTransaction(
+      amount: amount,
+      buyerFirstNm: buyerFirstNm,
+      buyerLastNm: buyerLastNm,
+      buyerPhone: buyerPhone,
+      userId: userId,
+      goodsNm: goodsNm,
+      payToken: payToken,
+      payType: payType,
+      payOption: payOption,
+      bankCode: bankCode,
+      language: language,
+      transactionId: transactionId,
+    );
+    PaymentBrowser(transaction: epayTransaction.toJson()).openPaymentBrowser();
   }
 
   final TextEditingController _amountController =
